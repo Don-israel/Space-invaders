@@ -21,15 +21,15 @@ pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Background
-background = pygame.image.load('backgorund.jpg')
+background = pygame.image.load("backgorund.jpg")
 
 # Caption and Icon
 pygame.display.set_caption("Space Invader")
-icon = pygame.image.load('ufo.png')
+icon = pygame.image.load('ufo-removebg-preview.png')
 pygame.display.set_icon(icon)
 
 # Player
-playerImg = pygame.image.load('png-transparent-gun-atlas-reactor-game-video-games-character-player-versus-player-pax-trion-worlds.png')
+playerImg = pygame.image.load('player.png')
 playerX = PLAYER_START_X
 playerY = PLAYER_START_Y
 playerX_change = 0
@@ -43,14 +43,14 @@ enemyY_change = []
 num_of_enemies = 6
 
 for _i in range(num_of_enemies):
-    enemyImg.append(pygame.image.load('enemy.png'))
+    enemyImg.append(pygame.image.load('enemy_png-removebg-preview.png'))
     enemyX.append(random.randint(0, SCREEN_WIDTH - 64))  # 64 is the size of the enemy
     enemyY.append(random.randint(ENEMY_START_Y_MIN, ENEMY_START_Y_MAX))
     enemyX_change.append(ENEMY_SPEED_X)
     enemyY_change.append(ENEMY_SPEED_Y)
 
 # Bullet
-bulletImg = pygame.image.load('bullet.png')
+bulletImg = pygame.image.load('bullet-removebg-preview.png')
 bulletX = 0
 bulletY = PLAYER_START_Y
 bulletX_change = 0
@@ -135,4 +135,21 @@ while running:
         # Collision Check
         if isCollision(enemyX[i], enemyY[i], bulletX, bulletY):
             bulletY = PLAYER_START_Y
-   
+            bullet_state = "ready"
+            score_value += 1
+            enemyX[i] = random.randint(0, SCREEN_WIDTH - 64)
+            enemyY[i] = random.randint(ENEMY_START_Y_MIN, ENEMY_START_Y_MAX)
+
+        enemy(enemyX[i], enemyY[i], i)
+
+    # Bullet Movement
+    if bulletY <= 0:
+        bulletY = PLAYER_START_Y
+        bullet_state = "ready"
+    elif bullet_state == "fire":
+        fire_bullet(bulletX, bulletY)
+        bulletY -= bulletY_change
+
+    player(playerX, playerY)
+    show_score(textX, textY)
+    pygame.display.update()
